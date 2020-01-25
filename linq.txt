@@ -1,0 +1,655 @@
+ ////GET api/State/
+        //public int Getstates(String s)
+        //{
+        //    var a = db.states.ToList();
+
+        //    foreach (var i in a)
+        //    {
+        //        if (i.state_name == s)
+        //        {
+        //            return i.state_id;
+        //        }
+        //        else
+        //        {
+        //            return 0;
+        //        }
+        //    }
+        //    return 0;
+
+        //}
+
+
+        //public state Getstate(int id)
+        //{
+        //     var b = db.states.ToList();
+        //    var res=(from i in b where b.)
+            
+            
+            
+        //    if (state == null)
+        //    {
+        //        throw new HttpResponseException(Request.CreateResponse(HttpStatusCode.NotFound));
+        //    }
+
+        //    return state;
+        //}
+
+
+
+
+/*****************************************/
+
+
+
+            public int Getstate(String s)
+        {
+            var a = db.states.ToList();
+
+            foreach (var i in a)
+            {
+                if (i.state_name == s)
+                {
+                    return i.state_id;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+            return 0;
+
+        }
+
+
+
+
+
+
+
+
+
+/*************************************************/
+
+        //to get only cities in particaular state
+        // GET api/State/1
+        public IEnumerable<String> Getstates(int id)
+        {
+            IEnumerable<String> ct = (from c in db.cities.ToList() where c.state_state_id.Equals(id) select c.city_name);
+            return ct ;
+        
+        }
+
+/*************************************************/
+         //to get all states name only 
+        // GET api/State
+        public IEnumerable<String> Getstates()
+        {
+            IEnumerable<String> ct = (from c in db.states.ToList()  select c.state_name);
+            return ct;
+        }
+
+/*************************************************/
+	
+ 	//to get only hub address in particaular city
+        // GET api/City/1
+        public IEnumerable<String> Gethubaddress(int id)
+        {
+            IEnumerable<String> ct = (from c in db.hubs where c.city_city_id.Equals(id) select c.hub_address);
+            return ct;
+
+        }
+
+/*************************************************/
+
+
+
+//TO GET CARS FROM CARCATEGORY ID
+
+ public IEnumerable<car> Getcarcategory(int id)
+        {
+            var ct = (from c in db.cars.ToList()
+                      where c.carcategory_category_id.Equals(id)
+                      select new car()
+                      {
+                          car_id = c.car_id,
+                          car_name = c.car_name,
+                          carcategory_category_id = c.carcategory_category_id
+                      });
+            return ct;
+        }
+
+/*************************************************/
+
+
+//To get start and end date from data base on the basis of Booking id
+
+
+
+ private fleetnewEntities db = new fleetnewEntities();
+        DateTime start;
+        DateTime end;
+        public int PostDate(int id)
+        {
+            IEnumerable<billing> ob = (from c in db.billings.ToList()
+                     where c.bookingid.Equals(id)
+                     select  new billing(){
+                     startdate=c.startdate,
+                     enddate=c.enddate
+                     
+                     });
+            
+            foreach (billing obj in ob.ToList())
+            {
+                start = obj.startdate;
+                end = obj.enddate;
+            }               
+
+            TimeSpan t = end.Subtract(start);
+            int r = t.Days +1;
+            
+           return r;
+        }
+
+
+
+    public class LoginController : ApiController
+    {
+        private FLEETDBEntities db = new FLEETDBEntities();
+
+        public List<registeruser> PostLogin(Login l)
+        {
+            List<registeruser> lst = db.registerusers.ToList();
+
+            List<registeruser> details = (from r in lst
+                                          where r.user_email_id == l.user_email_id
+                                          && r.user_password == l.user_password
+                                          select r).ToList();
+            return details;
+            if (null==details)
+            {
+                Console.WriteLine("wrong email id plzz login again"); 
+            }
+            else
+            {
+                Console.WriteLine("success");
+            }
+
+
+        }
+
+      
+
+        
+
+/*******************************************************/
+
+
+//        //public String PostLogin(Login l)
+//        //{
+//        //    List<registeruser> lst = db.registerusers.ToList();
+
+//        //    List<registeruser> user = (from r in lst
+//        //                  where r.useremailid == l.user_email_id
+//        //                  select r).ToList();
+
+//        //  List<registeruser>   pwd=(from r1 in lst
+//        //                where r1.userpassword == l.user_password select r1).ToList();
+
+
+//        //  if (user != null)
+//        //  {
+//        //      if (pwd != null)
+//        //      {
+//        //          return "username and pass correct";
+//        //      }
+//        //      else
+//        //      {
+//        //          return "incorrect pass";
+//        //      }
+//        //  }
+//        //  else
+//        //  {
+//        //      if (pwd != null)
+//        //      {
+//        //          return "incorrect user!!!!";
+//        //      }
+//        //      else
+//        //      {
+//        //          return "incorrect pass and user";
+////              }
+    
+          
+////          }
+////        }  
+////    }
+////}
+
+
+/*************************************************************/
+
+
+
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+using FleetManagement;
+
+
+namespace MvcApplication1.Controllers
+{
+    public class PriceController : ApiController
+    {
+        private fleetnewEntities db = new fleetnewEntities();
+        public IEnumerable<billing> GetPrice(int id)
+        {
+           var price = (from r in db.billings.ToList()
+                         where r.billid.Equals(id)
+                        select new billing()
+                                    {
+                                       billid= r.billid,
+                                        billfirstname= r.billfirstname,
+                                        billlastname=r.billlastname,
+                                        pickuplocation=r.pickuplocation
+
+                                    }
+                        );
+            return price;
+        
+        }
+
+
+    }
+}
+
+
+/*********************************************************/
+
+//write in post
+  booking.bookingdate = DateTime.Now;
+/****************************************************/
+
+
+
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+using Demoswagger;
+
+
+namespace MvcApplication1.Controllers
+{
+    public class PriceController : ApiController
+    {
+
+        billing b = new billing();
+        private FLEETDBEntities db = new FLEETDBEntities();
+        public IEnumerable<billing> GetPrice(int id)
+        {
+            var price = (from r in db.billings.ToList()
+                         where r.bill_id.Equals(id)
+                         select new billing()
+                         {
+                             bill_id = r.bill_id,
+                             bill_firstname = r.bill_firstname,
+                             bill_lastname = r.bill_lastname,
+                             pick_up_location = r.pick_up_location
+
+                         }
+                         );
+            return price;
+
+        }
+
+
+    }
+}
+
+
+/****************************************/
+
+ //GET booking object
+        // GET api/Booking
+        public IEnumerable<billing> Getbookings(int id)
+        {
+        var b = (from c in db.bookings.ToList()
+                 where c.bookingid.Equals(id)
+                            select new billing()
+                            {
+                               bookingid= c.bookingid,
+                                billfirstname=c.bfirstname,
+                                billlastname=c.blastname,
+                                address=c.baddress,
+                                aadharno=c.baadharno,
+                                phoneno=c.phoneno2,
+                                pickuplocation=c.pickuplocation,
+                                dropofflocation=c.dropofflocation,
+                                amenitiesname=c.amenetiesname,
+                                amenitiesrate=c.amenitiesrate,
+                             
+                            });
+            return b;
+        }
+
+
+/**************************************24/01/2020/***********************
+
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web;
+using System.Web.Http;
+using FleetManagement.Models;
+
+namespace FleetManagement.Controllers
+{
+    public class GenerateBillController : ApiController
+    {
+
+        private fleetnewEntities db = new fleetnewEntities();
+        DateTime start;
+        DateTime end = DateTime.Now;
+        int amt=0;
+        int month = 0, week = 0, day = 0, rem1 = 0;
+        int monthrate, weekrate, dailyrate;
+        [HttpGet]
+        public int GenerateBill(int id)
+        {
+            IEnumerable<billing> ob = (from c in db.billings.ToList()
+                                       where c.bookingid.Equals(id)
+                                       select new billing()
+                                       {
+                                           startdate = c.startdate,
+                                           enddate = c.enddate,
+                                           monthlyrate = c.monthlyrate,
+                                           weeklyrate = c.weeklyrate,
+                                           dailyrate = c.dailyrate
+                                       });
+
+            foreach (billing obj in ob.ToList())
+            {
+                start = obj.startdate;
+                monthrate = (int)obj.monthlyrate;
+                weekrate = (int)obj.weeklyrate;
+                dailyrate = (int)obj.dailyrate;
+                //                end = obj.enddate;
+            }
+
+            TimeSpan t = end.Subtract(start);
+            int nod = t.Days + 1;
+
+            if (nod >= 30)
+            {
+                month = nod / 30;
+                rem1 = nod % 30;
+                if (rem1 >= 7)
+                {
+                    week = rem1 / 7;
+                    day = rem1 % 7;
+                }
+                else
+                {
+                    day = rem1;
+                }
+
+            }
+
+            else
+                if (nod >= 7 && nod < 30)
+                {
+                    week = nod / 7;
+                    rem1 = nod % 7;
+                    day = rem1;
+                }
+                else
+                {
+                    day = nod;
+                }
+            amt = month * monthrate + week * weekrate + day * dailyrate;
+
+            return amt;
+
+        }
+
+        public IEnumerable<billing> GenerateInvoice(int id)
+        {
+            IEnumerable<billing> ob = (from c in db.billings.ToList()
+                                       where c.bookingid.Equals(id)
+                                       select new billing()
+                                       {
+                                           bookingid = c.bookingid,
+                                           billfirstname = c.billfirstname,
+                                           billlastname = c.billlastname,
+                                           aadharno = c.aadharno,
+                                           address = c.address,
+                                           totalamount = amt
+                                       });
+            return ob;
+        }
+    }
+}
+
+
+
+
+//static void Main(string[] args)
+//{
+//    DateTime D;
+//    DateTime today = DateTime.Now;
+
+//   Console.WriteLine("enter date");
+//    D= Convert.ToDateTime(Console.ReadLine()).Date;
+//    TimeSpan t = today.Subtract(D);
+
+//    Console.WriteLine(t.Days +1);
+//    Console.ReadLine();
+
+//    int nod = t.Days + 1;
+
+//    Program p = new Program();
+
+//    int a=p.countamount(nod);
+//    Console.WriteLine("amt=" + a);
+//    Console.ReadLine();
+
+//}
+
+
+
+
+//
+// GET: /GenerateBill/
+
+
+
+*//////////////////////////////////////////////////////////////**
+
+
+
+  //Gives car names by categoryid
+        public IEnumerable<car> Getcarsbytype(int id)
+        {
+            IEnumerable<car> s1 = (from c in db.cars.ToList()
+                             where c.carcategorycategoryid.Equals(id)
+                             select new car ()
+                             { 
+                                carname=c.carname
+                             });
+            return s1;
+            
+        
+        }
+
+
+
+using FleetManagement.Models;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web;
+using System.Web.Http;
+
+namespace FleetManagement.Controllers
+{
+    public class EmployeeController : ApiController
+    {
+        private fleetnewEntities db = new fleetnewEntities();
+
+
+        //EmployeeLogin
+        [HttpPost]
+        public List<employee> PostLogin(EmployeeLogin l)
+        {
+            List<employee> lst = db.employees.ToList();
+
+            List<employee> details = (from r in lst
+                                      where r.empemailid == l.empemailid
+                                      && r.empphoneno == l.empphoneno
+                                      select new employee()
+                     {
+                         empid=r.empid,
+                         empname=r.empname,
+                         empemailid = r.empemailid,
+                         empphoneno = r.empphoneno
+
+                     }).ToList();
+            return details;
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /**********************************************************/
+
+
+using FleetManagement.Models;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web;
+using System.Web.Http;
+
+namespace FleetManagement.Controllers
+{
+    public class EmployeeController : ApiController
+    {
+        private fleetnewEntities db = new fleetnewEntities();
+
+
+        //EmployeeLogin
+        [HttpPost]
+        public List<employee> PostLogin(EmployeeLogin l)
+        {
+            List<employee> lst = db.employees.ToList();
+
+            List<employee> details = (from r in lst
+                                      where r.empemailid == l.empemailid
+                                      && r.empphoneno == l.empphoneno
+                                      select new employee()
+                     {
+                         empid=r.empid,
+                         empname=r.empname,
+                         empemailid = r.empemailid,
+                         empphoneno = r.empphoneno
+
+                     }).ToList();
+            return details;
+
+
+
+
+
+        }
+
+
+
+/********************************************/
+
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web;
+using System.Web.Http;
+using FleetManagement.Models;
+
+namespace FleetManagement.Controllers
+{  
+    public class LoginController : ApiController
+    {
+ 
+        private fleetnewEntities db = new fleetnewEntities();
+        [HttpPost] 
+        public List<registeruser> PostLogin(Login l)
+        {
+            List<registeruser> lst = db.registerusers.ToList();
+
+            List<registeruser> details = (from r in lst
+                                          where r.useremailid == l.useremailid
+                                          && r.userpassword == l.userpassword
+                                          select new registeruser()
+                         {
+                             userid = r.userid,
+                             userfirstname = r.userfirstname,
+                               userlastname=r.userlastname,
+                               userdob=r.userdob,
+                               useraadharno=r.useraadharno,
+                               userdrivinglicenceno=r.userdrivinglicenceno,
+                               userpassportno=r.userpassportno,
+                               useraddress1=r.useraddress1,
+                               useraddress2=r.useraddress2,
+                               useremailid=r.useremailid,
+                               userphoneno=r.userphoneno
+                         }).ToList();
+            return details;
+
+
+
